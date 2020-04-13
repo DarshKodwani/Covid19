@@ -9,11 +9,10 @@ Created on Sun Apr 12 15:11:07 2020
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import sys
 
 # import raw world bank data
 # Country Name # Country Code # Year # Value #
-bank_df = pd.read_csv("../data/datahub/gdp_csv.txt")
+bank_df = pd.read_csv("../../data/datahub/gdp_csv.txt")
 
 # useful lists for extracting data
 yr_list = list(np.arange(1960, 2016 + 1))
