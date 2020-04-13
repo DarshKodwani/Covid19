@@ -6,30 +6,38 @@ import datetime
 
 
 dj = pd.read_csv('historical_dj.csv', index_col = 'Date', parse_dates = True)
-sp500 = pd.read_csv('historical_sp500.csv', index_col = 'Date', parse_dates = True)
-print(sp500.head())
-
 dj = dj['Value']
-dates = np.array(dj.index.values)
+dates_dj = np.array(dj.index.values)
 ddj = np.gradient(dj) # Gradient of dj 
 dddj = np.gradient(ddj) # Gradient of dj 
+
+
+sp500 = pd.read_csv('historical_sp500.csv', index_col = 'Date', parse_dates = True)
+print(sp500.head())
+sp500 = sp500['Value']
+dates_sp500 = np.array(sp500.index.values)
+dsp500 = np.gradient(sp500)
+ddsp500 = np.gradient(dsp500)
 
 ### Plotting stock data and overlaying pandaemic dates ###
 
 fig = plt.figure(figsize = [12,8])
 
 ax = fig.add_axes([0.15, 0.5, 0.7, 0.45])
-ax.plot(dates, dj, label = 'Dow jones')
+ax.plot(dates_dj, dj, label = 'Dow jones')
+ax.plot(dates_sp500, sp500, label = 'sp500')
 ax.set_ylabel('Value')
 ax.set_xlabel('Date')
 
 ax1 = fig.add_axes([0.15, 0.3, 0.7, 0.2])
-ax1.plot(dates, ddj)
+ax1.plot(dates_dj, ddj)
+ax1.plot(dates_sp500, dsp500)
 ax1.set_ylabel('First derivative')
 ax1.set_xlabel('Date')
 
 ax2 = fig.add_axes([0.15, 0.1, 0.7, 0.2])
-ax2.plot(dates, dddj)
+ax2.plot(dates_dj, dddj)
+ax2.plot(dates_sp500, ddsp500)
 ax2.set_ylabel('Second derivative')
 ax2.set_xlabel('Date')
 
