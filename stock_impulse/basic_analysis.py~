@@ -9,28 +9,28 @@ dj = pd.read_csv('historical_dj.csv', index_col = 'Date', parse_dates = True)
 sp500 = pd.read_csv('historical_sp500.csv', index_col = 'Date', parse_dates = True)
 print(sp500.head())
 
-values = dj['Value'][::-1]
-dates = np.array(dj.index.values)[::-1]
-dvalues = np.gradient(values) # Gradient of dj 
-ddvalues = np.gradient(dvalues) # Gradient of dj 
+dj = dj['Value']
+dates = np.array(dj.index.values)
+ddj = np.gradient(dj) # Gradient of dj 
+dddj = np.gradient(ddj) # Gradient of dj 
 
 ### Plotting stock data and overlaying pandaemic dates ###
 
 fig = plt.figure(figsize = [12,8])
 
 ax = fig.add_axes([0.15, 0.5, 0.7, 0.45])
-ax.plot(dates, values)
-ax.set_ylabel('Dow jones index')
+ax.plot(dates, dj, label = 'Dow jones')
+ax.set_ylabel('Value')
 ax.set_xlabel('Date')
 
 ax1 = fig.add_axes([0.15, 0.3, 0.7, 0.2])
-ax1.plot(dates, dvalues)
-ax1.set_ylabel('Derivative of dj')
+ax1.plot(dates, ddj)
+ax1.set_ylabel('First derivative')
 ax1.set_xlabel('Date')
 
 ax2 = fig.add_axes([0.15, 0.1, 0.7, 0.2])
-ax2.plot(dates, ddvalues)
-ax2.set_ylabel('Second derivative of dj')
+ax2.plot(dates, dddj)
+ax2.set_ylabel('Second derivative')
 ax2.set_xlabel('Date')
 
 # Spanish flu #
