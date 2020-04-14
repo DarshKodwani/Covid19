@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr 13 13:05:58 2020
+Created on Mon Apr 13 20:32:53 2020
 
 @author: tharshi
 """
@@ -10,12 +10,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# SARS timeline: November 2002 - June 2004 = > Q4 2002 to Q2 2004 
+# EBOLA timeline: March 2009 - August 2010 = > Q1 2009 to Q3 2010 
 
 # import IFS data
 # this data is unadjusted for inflation and seasonality
 # GDP is measured in domestic currency (Millions)
-gdp_df = pd.read_excel("../../data/IFS/Q_nominal_GDP_2002to2004.xls",
+gdp_df = pd.read_excel("../../data/IFS/Q_nominal_GDP_Q12009toQ32010.xls",
                        header=6,
                        index_col=1,
                        na_values=["...", "-"])
@@ -25,14 +25,14 @@ gdp_df = gdp_df.drop("Unnamed: 0", axis=1)
 gdp_df = gdp_df.dropna()
 
 # import and clean worldbank GDP deflator data
-def_df = pd.read_csv("../../data/IFS/Y_GDPDeflator_2002to2004.csv",
+def_df = pd.read_csv("../../data/IFS/Y_GDPDeflator_Q12009toQ32010.csv",
                        header=0,
                        index_col=0,
                        na_values=["...", "-"])
 def_df = def_df.dropna()
 
 # import and clean exchange rate data (local currency to USD)
-xrate_df = pd.read_excel("../../data/IFS/Q_XRates_2002to2004.xls",
+xrate_df = pd.read_excel("../../data/IFS/Q_XRates_Q12009toQ32010.xls",
                        header=6,
                        index_col=1,
                        na_values=["...", "-"])
@@ -40,6 +40,8 @@ xrate_df = pd.read_excel("../../data/IFS/Q_XRates_2002to2004.xls",
 xrate_df = xrate_df.drop(["Unnamed: 0",
                           "Scale",
                           "Base Year"], axis=1)
+xrate_df = xrate_df.dropna()
+
 # intersect data
 idx = (gdp_df.index.intersection(def_df.index)).intersection(xrate_df.index)
 gdp_df = gdp_df.loc[idx]
@@ -49,25 +51,20 @@ xrate_df = xrate_df.loc[idx]
 # change to USD
 data = gdp_df / xrate_df
 
-# change to 2004 USD
+# change to Q3 2010 USD
 def_df = (def_df + 100)/100
-def_df = def_df.div(def_df["2004"], axis=0)
-years = ["2002", "2003", "2004"]
+def_df = def_df.div(def_df["2010Q3"], axis=0)
 
 for c in range(data.count(1)[0]):
     col = data.columns[c]
-    for y in years:
-        if y in col:
-            data[col] = data[col].div(def_df[y], axis=0)
-        else:
-            pass
-        
+    data[col] = data[col].div(def_df[col], axis=0)
+    
 # add world gdp and remove calculated categories
 data.loc['World']= data.sum(numeric_only=True, axis=0)
 data = data.drop("Euro Area", axis=0)
 
 # calculate correlation matrix for top N nations
-N = 50
+N = 15
 topN_idx = data.sum(axis=1).sort_values(ascending=False).head(N).index
 corr_mat = data.loc[topN_idx].T.corr()
 
@@ -89,7 +86,7 @@ plt.setp(ax.get_yticklabels(), fontsize=f_size)
 
 # plot correlation as heatmap
 im = ax.imshow(corr_mat, cmap="coolwarm", aspect="auto",vmin=-1, vmax=1)
-ax.set_title("Correlation Matrix - SARS - Top {} Contributors".format(N))
+ax.set_title("Correlation Matrix - Ebola - Top {} Contributors".format(N))
 min_val = corr_mat.min().min()
 max_val = corr_mat.max().max()
 if N > 22:
@@ -105,4 +102,4 @@ elif 0 < N <= 22:
             text = ax.text(j, i, value, ha="center", va="center", color=colour)
 else:
     pass
-plt.savefig("gdp_corr_SARS_top{}.pdf".format(N), dpi=600, bbox_inches="tight")
+plt.savefig("gdp_corr_Swineflu_top{}.pdf".format(N), dpi=600, bbox_inches="tight")
