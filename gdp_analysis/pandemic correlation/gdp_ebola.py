@@ -64,7 +64,7 @@ data.loc['World']= data.sum(numeric_only=True, axis=0)
 data = data.drop("Euro Area", axis=0)
 
 # calculate correlation matrix for top N nations
-N = 15
+N = 6
 topN_idx = data.sum(axis=1).sort_values(ascending=False).head(N).index
 corr_mat = data.loc[topN_idx].T.corr()
 
@@ -87,8 +87,7 @@ plt.setp(ax.get_yticklabels(), fontsize=f_size)
 # plot correlation as heatmap
 im = ax.imshow(corr_mat, cmap="coolwarm", aspect="auto",vmin=-1, vmax=1)
 ax.set_title("Correlation Matrix - Ebola - Top {} Contributors".format(N))
-min_val = corr_mat.min().min()
-max_val = corr_mat.max().max()
+
 if N > 22:
     fig.colorbar(im)
 elif 0 < N <= 22:

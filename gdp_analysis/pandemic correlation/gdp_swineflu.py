@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# EBOLA timeline: March 2009 - August 2010 = > Q1 2009 to Q3 2010 
+# Swineflue timeline: March 2009 - August 2010 = > Q1 2009 to Q3 2010 
 
 # import IFS data
 # this data is unadjusted for inflation and seasonality
@@ -64,7 +64,7 @@ data.loc['World']= data.sum(numeric_only=True, axis=0)
 data = data.drop("Euro Area", axis=0)
 
 # calculate correlation matrix for top N nations
-N = 15
+N = 50
 topN_idx = data.sum(axis=1).sort_values(ascending=False).head(N).index
 corr_mat = data.loc[topN_idx].T.corr()
 
@@ -86,9 +86,8 @@ plt.setp(ax.get_yticklabels(), fontsize=f_size)
 
 # plot correlation as heatmap
 im = ax.imshow(corr_mat, cmap="coolwarm", aspect="auto",vmin=-1, vmax=1)
-ax.set_title("Correlation Matrix - Ebola - Top {} Contributors".format(N))
-min_val = corr_mat.min().min()
-max_val = corr_mat.max().max()
+ax.set_title("Correlation Matrix - Swineflu - Top {} Contributors".format(N))
+
 if N > 22:
     fig.colorbar(im)
 elif 0 < N <= 22:
