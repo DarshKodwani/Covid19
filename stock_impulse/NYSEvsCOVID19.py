@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
-import matplotlib.ticker as ticker
 
 # make pretty
 plt.style.use('seaborn')
@@ -29,11 +28,14 @@ nyt_df = nyt_df.groupby(['date']).sum().reset_index()
 #%% Plot NYT data
 
 start_date = nyt_df["date"].loc[0]
+n_cases = nyt_df["cases"]
+n_deaths = nyt_df["deaths"]
+n_data = len(nyt_df)
 
 # plot NYT data
 fig1, ax_1 = plt.subplots()
-plt.semilogy(nyt_df["cases"],  ".", label="cases")
-plt.semilogy(nyt_df["deaths"], ".", label="deaths")
+plt.semilogy(n_cases,  ".", label="cases")
+plt.semilogy(n_deaths, ".", label="deaths")
 plt.xlabel("Days since {}".format(start_date))
 plt.ylabel("Count")
 plt.legend()
@@ -105,12 +107,12 @@ for i in range(len(holidays_no_weekends)):
     
 # final sort of dataframe by date
 yf_df = yf_df.sort_values(by="Date").reset_index(drop=True)
-
+close_val = yf_df["Close"]
 #%% plot SP500 data
 
 # plot S&P500 data
 fig2, ax2 = plt.subplots()
-scatter2 = ax2.scatter(nyt_df["cases"], yf_df["Close"], s=12, c=np.arange(0, len(nyt_df)), cmap="brg")
+scatter2 = ax2.scatter(n_cases, close_val, s=12, c=np.arange(0, n_data), cmap="brg")
 ax2.set_xlabel("Cases since {}".format(start_date))
 ax2.set_xscale("log")
 cb2 = plt.colorbar(scatter2)
@@ -121,13 +123,31 @@ plt.grid("on")
 plt.savefig("sp500_v_inf.pdf", dpi=600)
 
 fig3, ax3 = plt.subplots()
-scatter3 = ax3.scatter(nyt_df["deaths"], yf_df["Close"], s=12, c=np.arange(0, len(nyt_df)), cmap="brg")
+scatter3 = ax3.scatter(n_deaths, close_val, s=12, c=np.arange(0, n_data), cmap="brg")
 ax3.set_xlabel("Deaths since {}".format(start_date))
 ax3.set_xscale("log")
-ax3.set_xlim([1, np.max(nyt_df["deaths"])])
+ax3.set_xlim([1, np.max(n_deaths)])
 cb3 = plt.colorbar(scatter3)
 cb3.set_label("Days since {}".format(start_date))
 plt.ylabel("Closing Price (USD)")
 plt.title("S&P500 During COVID19 Crisis")
 plt.grid("on")
 plt.savefig("sp500_v_deaths.pdf", dpi=600)
+
+#%% plot d(SP500)/d(n_cases)
+
+# perturb n_cases data to avoid zero division errors
+# calculate gradient
+dclose_dcases = np.gradient(close_val, n_cases + np.random.randn(n_data))
+
+fig4, ax4 = plt.subplots()
+scatter4 = ax4.scatter(n_cases, dclose_dcases, s=12, c=np.arange(0, n_data), cmap="brg")
+ax4.set_xlabel("Cases since {}".format(start_date))
+ax4.set_xscale("log")
+ax4.set_xlim([1, np.max(n_cases)])
+cb4 = plt.colorbar(scatter4)
+cb4.set_label("Days since {}".format(start_date))
+plt.ylabel("Closing Price (USD)")
+plt.title("S&P500 During COVID19 Crisis")
+plt.grid("on")
+plt.savefig("grad_sp500_v_cases.pdf", dpi=600)
