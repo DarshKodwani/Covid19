@@ -36,11 +36,11 @@ np.random.seed(27)
 # control modules, full run needs all of them on if you want to
 # recalculate everything
 import_data = True
-need_tokens = False
-need_features = False
-need_model = False
-train = False
-test_k = False
+need_tokens = True
+need_features = True
+need_model = True
+train = True
+test_k = True
 cluster = False
 viz = True
 
