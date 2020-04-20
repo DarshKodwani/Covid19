@@ -11,7 +11,6 @@ Created on Fri Apr 17 22:29:51 2020
 import pandas as pd
 import numpy as np
 import os
-import pickle
 
 import re
 import nltk
@@ -361,8 +360,7 @@ else:
                         c=df['cluster'].to_list(),
                         cmap=cmap,
                         norm=norm,
-                        s=3,
-                        alpha=0.03)
+                        s=1)
     # create the colorbar
     cb = plt.colorbar(scat, spacing='proportional', ticks=bounds)
     cb.set_label('Classes')
@@ -371,8 +369,8 @@ else:
     ax3.set_title('Tweets - PCA')
 
     var_pct = np.round(100 * sum(pca.explained_variance_ratio_), 3)
-    comp_pct = np.round(2/X_en.shape[1], 3)
-    plt.xlabel(('variance: {} from 2/{} ({}%) components'
+    comp_pct = np.round(100 * 2 / X_en.shape[1], 3)
+    plt.xlabel(('variance: {:3f}% from 2/{} ({}%) components'
                 .format(var_pct, X_en.shape[1], comp_pct)))
     ax3.set_yticklabels([])
     ax3.set_xticklabels([])
@@ -399,8 +397,8 @@ else:
 
     # Use tSNE to project data to 2D
     print('Reducing dimension via tSNE...')
-    p = 6
-    tsne = TSNE(n_components=2, verbose=1, perplexity=50)
+    p = 15
+    tsne = TSNE(n_components=2, verbose=1, perplexity=p)
     X_t = tsne.fit_transform(X_en)
     print('Done.')
 
@@ -411,8 +409,7 @@ else:
                         c=df['cluster'].to_list(),
                         cmap=cmap,
                         norm=norm,
-                        s=3,
-                        alpha=0.03)
+                        s=1)
     # create the colorbar
     cb = plt.colorbar(scat, spacing='proportional', ticks=bounds)
     cb.set_label('Classes')
