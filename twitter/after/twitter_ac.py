@@ -226,7 +226,7 @@ else:
     
     print('Saving Word2Vec model...', end='')
     w2v.save('w2v.model')
-    print('Done.')
+    print('Done.\n')
 
 # get document level embeddings
 print('Creating feature matrix...\n')
@@ -526,12 +526,14 @@ km = km.fit(X_en)
 print("Done.")
 
 if os.path.isfile('labels.npy'):
+    print('Labels already exist, loading', end='')
+    labels = np.load('labels.npy')
+    print('Done.\n')
+else:
     print('Saving labels...', end='')
     labels = km.labels_
     np.save('labels.npy', labels)
     print('Done.\n')
-else:
-    pass
 
 #%% Plot 2D PCA projection
 
